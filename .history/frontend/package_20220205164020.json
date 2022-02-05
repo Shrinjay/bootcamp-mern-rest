@@ -28,5 +28,5 @@
     "not ie <= 11",
     "not op_mini all"
   ],
-  "proxy": "http://bootcamp-mern-rest-backend-1:5000"
+  "proxy": "http://localhost:3000/"
 }

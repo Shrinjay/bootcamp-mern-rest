@@ -3,7 +3,6 @@
  * it references the "restaurants" collection in our MongoDB database
  */
 import Restaurant from "../persistence/models/restaurant";
-import RestaurantGroup from "../persistence/models/restaurantGroup";
 import { ResponseResource } from "../resources/responseResource";
 import { RestaurantResponseResource } from "../resources/restaurantResponseResource";
 
@@ -76,32 +75,5 @@ async function deleteRestaurant(id) {
     }
 }
 
-async function retriveRestaurantGroup(id) {
-    const RestaurantGroup = await RestaurantGroup.findbyId(id);
-
-    return RestaurantGroup.map(r => new RestaurantGroupResponseResource(r))
-}
-
-async function retriveRestaurantbyID(id) {
-    const restaurants = await Restaurant.findbyId(id);
-
-    return new RestaurantResponseResource(restaurants)
-}
-
-async function ProcessedRestaurantGroup(restaurantGroups) {
-    const processedResponse = restaurantGroups.map( r => {
-        var processed;
-
-        processed = {
-            ...r,
-            restaurants: r.restaurantIds.map(id => retriveRestaurantID(id))
-        }
-
-        delete processed.restaurantIds;
-        return processed;
-    })
-    return new ResponseResource(new ProcessedRestaurantGroupResponseResource(processedResponse))
-}
-
-const RestaurantService = { getRestaurants, createRestaurant, updateRestaurant, deleteRestaurant, retriveRestaurantGroup, retriveRestaurantbyID, ProcessedRestaurantGroup};
+const RestaurantService = { getRestaurants, createRestaurant, updateRestaurant, deleteRestaurant };
 export default RestaurantService;
