@@ -2,6 +2,7 @@ import { Router } from "express";
 
 import RestaurantService from "../services/restaurantService";
 import { RestaurantRequestResource } from "../resources/restaurantRequestResource";
+import { GroupRequestResource } from "../resources/groupRequestResource";
 
 /**
  * create a router, which handles requests sent to a given URL
@@ -110,5 +111,38 @@ router.get("/groups/:id", async (req, res) =>  {
 
     res.status(200).json(result.value);
 })
+
+/**
+ * handle HTTP POST requests to creating restaurant group /groups
+ * the restaurant group specified in the request body should be created, and the created group id should be returned
+ */
+ router.post("/groups", async (req, res) => {
+    /**
+     * create a RestaurantRequestResource object instead of using the raw req.body
+     * data validators and transformations are applied when constructing the resource,
+     * this allows downstream code to make safe assumptions about the data
+     */
+    let restaurantGroup;
+
+    try {
+        /* jump into the RestaurantRequestResource definition to see the validators and transformations */
+        restaurantGroup = new GroupRequestResource(req.body);
+    } catch (error) {
+        /* failure to create the resource means req.body contains invalid data, send HTTP status code 400 (Bad Request) */
+        res.status(400).json(error.message);
+        return;
+    }
+
+    /* again, let the service layer handle the business logic of creating a restaurant */
+    const result = await RestaurantService.createRestaurant(restaurant);
+
+    if (result.errorMessage) {
+        res.status(500).json(result.errorMessage);
+        return;
+    }
+
+    /* HTTP status code 201 means Created */
+    res.status(201).json(result.value);
+});
 
 export default router;

@@ -20,6 +20,7 @@ const Display = ({ loadData, storeData }) => {
    * setData is a function used to update data, similar to this.setState({ data: ["my", "new", "data"] })
    */
   const [data, setData] = useState([]);
+  const [groupData, setGroupData] = useState([]);
 
 
   /**
@@ -35,6 +36,7 @@ const Display = ({ loadData, storeData }) => {
     async function fetchData() {
       const result = await fetch('/api/restaurants')
       const json = await result.json();
+      const groupResult = await fetch('/api/restaurants/groups')
 
       /**
        * since the API request is async, it's possible that the component has unmounted by the time we call setData.
@@ -46,6 +48,7 @@ const Display = ({ loadData, storeData }) => {
       if (!hasUnmounted) {
         setData(json);
         loadData(json);
+        setGroupData(groupResult ?? [])
       }
     }
 
@@ -64,6 +67,18 @@ const Display = ({ loadData, storeData }) => {
       <BasicTable data={data} />
       <h2>Global Data Handling</h2>
       <BasicTable  data={storeData} />
+      <h2>Restaurant Groups</h2>
+      {
+        groupData.map(group => {
+          return (
+            <div>
+              <h2>Group {group.name}</h2>
+              <p><b>Description: </b>{group.description}</p>
+              <BasicTable data={group.restaurants} />
+            </div>
+          )
+        })
+      }
     </div>
   );
 }
