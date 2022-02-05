@@ -8,7 +8,7 @@ const RestaurantGroup = mongoose.model("Restaurant Group", new mongoose.Schema(
         },
         name: String,
         description: String,
-        restaurantIds: [{type: mongoose.Types.ObjectId, ref: 'Restaurant'}]
+        restaurantIds: [String]
     }
 ));
 
