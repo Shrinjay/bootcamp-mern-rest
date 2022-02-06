@@ -1,7 +1,7 @@
 export class ProcessedRestaurantGroupResponseResource {
     constructor(dbRecord) {
         /* MongoDB documents have an auto-generated _id field, convert to id in our API response */
-        this.id = dbRecord._id;
+        this.id = dbRecord.id;
         this.name = dbRecord.name;
         /**
          * undefined values will not get serialized in the JSON response

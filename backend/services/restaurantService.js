@@ -76,32 +76,11 @@ async function deleteRestaurant(id) {
     }
 }
 
-async function retriveRestaurantGroup(id) {
-    const RestaurantGroup = await RestaurantGroup.findbyId(id);
-
-    return RestaurantGroup.map(r => new RestaurantGroupResponseResource(r))
-}
-
 async function retriveRestaurantbyID(id) {
-    const restaurants = await Restaurant.findbyId(id);
+    const restaurants = await Restaurant.findById(id);
 
     return new RestaurantResponseResource(restaurants)
 }
 
-async function ProcessedRestaurantGroup(restaurantGroups) {
-    const processedResponse = restaurantGroups.map( r => {
-        var processed;
-
-        processed = {
-            ...r,
-            restaurants: r.restaurantIds.map(id => retriveRestaurantID(id))
-        }
-
-        delete processed.restaurantIds;
-        return processed;
-    })
-    return new ResponseResource(new ProcessedRestaurantGroupResponseResource(processedResponse))
-}
-
-const RestaurantService = { getRestaurants, createRestaurant, updateRestaurant, deleteRestaurant, retriveRestaurantGroup, retriveRestaurantbyID, ProcessedRestaurantGroup};
+const RestaurantService = { getRestaurants, createRestaurant, updateRestaurant, deleteRestaurant, retriveRestaurantbyID};
 export default RestaurantService;

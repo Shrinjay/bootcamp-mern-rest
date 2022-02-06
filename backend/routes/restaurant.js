@@ -1,6 +1,7 @@
 import { Router } from "express";
 
 import RestaurantService from "../services/restaurantService";
+import RestaurantGroupService from '../services/restaurantGroupService';
 import { RestaurantRequestResource } from "../resources/restaurantRequestResource";
 import { GroupRequestResource } from "../resources/groupRequestResource";
 
@@ -104,10 +105,18 @@ router.delete("/:id", async (req, res) => {
     res.status(204).json();
 })
 
-router.get("/groups/:id", async (req, res) =>  {
-    const rawResult = await RestaurantService.retriveRestaurantGroup(req.params.id);
+router.get("/groups", async(req, res) => {
+    const rawResult = await RestaurantGroupService.retriveRestaurantGroups();
+    
+    const result = await RestaurantGroupService.ProcessedRestaurantGroup(rawResult);
 
-    const result = await RestaurantService.ProcessedRestaurantGroup(rawResult);
+    res.status(200).json(result.value);
+})
+
+router.get("/groups/:id", async (req, res) =>  {
+    const rawResult = await RestaurantGroupService.retriveRestaurantGroup(req.params.id);
+
+    const result = await RestaurantGroupService.ProcessedRestaurantGroup(rawResult);
 
     res.status(200).json(result.value);
 })
@@ -123,7 +132,6 @@ router.get("/groups/:id", async (req, res) =>  {
      * this allows downstream code to make safe assumptions about the data
      */
     let restaurantGroup;
-
     try {
         /* jump into the RestaurantRequestResource definition to see the validators and transformations */
         restaurantGroup = new GroupRequestResource(req.body);
@@ -134,7 +142,7 @@ router.get("/groups/:id", async (req, res) =>  {
     }
 
     /* again, let the service layer handle the business logic of creating a restaurant */
-    const result = await RestaurantService.createRestaurant(restaurant);
+    const result = await RestaurantGroupService.createRestaurantGroup(restaurantGroup);
 
     if (result.errorMessage) {
         res.status(500).json(result.errorMessage);

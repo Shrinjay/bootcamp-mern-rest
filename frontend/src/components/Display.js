@@ -37,6 +37,7 @@ const Display = ({ loadData, storeData }) => {
       const result = await fetch('/api/restaurants')
       const json = await result.json();
       const groupResult = await fetch('/api/restaurants/groups')
+      const groupResultJson = await groupResult.json();
 
       /**
        * since the API request is async, it's possible that the component has unmounted by the time we call setData.
@@ -48,7 +49,10 @@ const Display = ({ loadData, storeData }) => {
       if (!hasUnmounted) {
         setData(json);
         loadData(json);
-        setGroupData(groupResult ?? [])
+        if (!!groupResult) {
+          console.log(groupResultJson)
+          setGroupData(groupResultJson)
+        }
       }
     }
 
